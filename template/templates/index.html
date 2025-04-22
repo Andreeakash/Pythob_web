@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Web Content Q&A</title>
+    <style>
+        body { font-family: Arial; max-width: 800px; margin: 40px auto; padding: 20px; }
+        textarea, input { width: 100%; padding: 10px; margin: 10px 0; }
+        button { padding: 10px 20px; background: #4CAF50; color: white; border: none; }
+        .output { background: #eef; padding: 15px; margin-top: 15px; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h2>🔗 Web Content Q&A Assistant</h2>
+
+    <label>Enter URLs (one per line):</label>
+    <textarea id="urls" rows="5" placeholder="https://example.com"></textarea>
+    <button onclick="submitUrls()">Ingest Content</button>
+
+    <label>Ask a Question:</label>
+    <input type="text" id="question" placeholder="Type your question here...">
+    <button onclick="askQuestion()">Get Answer</button>
+
+    <div class="output" id="answerBox" style="display:none;">
+        <strong>Answer:</strong>
+        <div id="answerText"></div>
+    </div>
+
+    <script>
+        async function submitUrls() {
+            const urls = document.getElementById("urls").value.trim().split("\n");
+            const res = await fetch('/ingest', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ urls })
+            });
+            const data = await res.json();
+            alert(data.message);
+        }
+
+        async function askQuestion() {
+            const question = document.getElementById("question").value;
+            const res = await fetch('/ask', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ question })
+            });
+            const data = await res.json();
+            document.getElementById("answerBox").style.display = "block";
+            document.getElementById("answerText").innerText = data.answer;
+        }
+    </script>
+</body>
+</html>
